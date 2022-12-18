@@ -2,8 +2,8 @@
 
 const forms = (state) => {
     const form = document.querySelectorAll('form'),
-          inputs = document.querySelectorAll('input');
-    // checkNumInputs('input[name="user_phone"]');
+          inputs = document.querySelectorAll('input'),
+          upload = document.querySelectorAll('[name="upload"]');
 
     const message = {
         loading: 'Loading...',
@@ -32,7 +32,20 @@ const forms = (state) => {
         inputs.forEach(item => {
             item.value = '';
         });
+        upload.forEach(item => {
+            item.previousElementSibling.textContent = "Файл не выбран";
+        });
     };
+
+    upload.forEach(item => {
+        item.addEventListener('input', () => {
+            let dots;
+            const arrName = item.files[0].name.split('.');
+            arrName[0].length > 5 ? dots = '...' : dots = '.';
+            const name = arrName[0].substring(0, 6) + dots + arrName[1];
+            item.previousElementSibling.textContent = name;
+        });
+    });
 
     form.forEach(item => {
         item.addEventListener('submit', (e) => {
@@ -58,7 +71,7 @@ const forms = (state) => {
 
             const formData = new FormData(item);
             let api;
-            item.closest('.popup-design') ? api = path.designer : api = path.question;
+            item.closest('.popup-design') || item.classList.contains('calc-form') ? api = path.designer : api = path.question;
             console.log(api);
 
             postData(api, formData)
